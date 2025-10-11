@@ -9,10 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/components/ui/card";
-import { PersonStanding } from "lucide-react";
+import { CalendarIcon, PersonStanding } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { refine, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -31,14 +31,68 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@repo/components/ui/popover";
+import { Calendar } from "@repo/components/ui/calendar";
+import { format } from "date-fns";
 
-const formObject = z.object({
-  email: z.email(),
-  password: z.string(),
-  accountType: z.enum(["personal", "company"]),
-  companyName: z.string().optional(),
-  numOfEmployees: z.number().optional(),
-});
+const formObject = z
+  .object({
+    email: z.email(),
+    accountType: z.enum(["personal", "company"]),
+    companyName: z.string().optional(),
+    numOfEmployees: z.number().optional(),
+    dob: z.date().refine((date) => {
+      const today = new Date();
+      const eighteenYrsAgo = new Date(
+        today.getFullYear() - 18,
+        today.getMonth(),
+        today.getDate(),
+        0,
+        0,
+        0,
+        0,
+      );
+      return date <= eighteenYrsAgo;
+    }, "You must atleast 18 years old"),
+    password: z
+      .string()
+      .min(8, "Atleast 8 characters")
+      .max(14, "Maximum 14 characters")
+      .refine(
+        (password) => /^(?=.*[!@#$%^&*])(?=.*[A-Z]).*$/.test(password),
+        "Atleast 1 special char and 1 upper letter",
+      ),
+    passwordConfirm: z.string(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.accountType === "company") {
+      if (!data.companyName || data.companyName === "") {
+        ctx.addIssue({
+          code: "custom",
+          path: ["companyName"],
+          message: "Company Name is required",
+        });
+      }
+      if (!data.numOfEmployees || data.numOfEmployees < 1) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["numOfEmployees"],
+          message: "No. of employee must be valid",
+        });
+      }
+    }
+    if (data.password !== data.passwordConfirm) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["passwordConfirm"],
+        message: "Both password should match",
+      });
+    }
+  });
 
 export default function SignupPage() {
   const form = useForm({
@@ -46,9 +100,10 @@ export default function SignupPage() {
     defaultValues: {
       email: "",
       password: "",
-      accountType: "company",
+      accountType: undefined,
       companyName: undefined,
       numOfEmployees: undefined,
+      dob: undefined,
     },
   });
 
@@ -91,27 +146,10 @@ export default function SignupPage() {
               />
               <FormField
                 control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="p@ssw0Rd"
-                        // type="email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name="accountType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="w-full">Account Type</FormLabel>
+                    <FormLabel>Account Type</FormLabel>
                     <Select onValueChange={field.onChange}>
                       <FormControl className="w-full">
                         <SelectTrigger>
@@ -165,11 +203,11 @@ export default function SignupPage() {
                                 filteredVal
                                   ? Number.isNaN(filteredVal)
                                     ? undefined
-                                    : filteredVal
+                                    : Number(filteredVal)
                                   : undefined,
                               );
                             }}
-                            value={field.value?.toString() ?? ""}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -178,6 +216,89 @@ export default function SignupPage() {
                   />
                 </>
               )}
+              <FormField
+                control={form.control}
+                name="dob"
+                render={({ field }) => {
+                  const maxAgeYearsBefore = new Date();
+                  maxAgeYearsBefore.setFullYear(
+                    maxAgeYearsBefore.getFullYear() - 140,
+                  );
+                  return (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Date of birth</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              className="flex justify-between normal-case text-muted-foreground"
+                            >
+                              {!!field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent align="start" className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            defaultMonth={field.value}
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            weekStartsOn={1}
+                            fixedWeeks
+                            startMonth={maxAgeYearsBefore}
+                            captionLayout="dropdown"
+                            disabled={{
+                              before: maxAgeYearsBefore,
+                              after: new Date(),
+                            }}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="••••••••"
+                        type="password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="passwordConfirm"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="••••••••"
+                        type="password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <Button type="submit">Sign Up</Button>
             </form>
           </Form>
@@ -188,7 +309,7 @@ export default function SignupPage() {
             <Link href={"/login"}>Login</Link>
           </Button>
         </CardFooter>
-      </Card>{" "}
+      </Card>
     </>
   );
 }
