@@ -38,35 +38,15 @@ import {
 } from "@repo/components/ui/popover";
 import { Calendar } from "@repo/components/ui/calendar";
 import { format } from "date-fns";
+import { PasswordInput } from "@repo/components/ui/password";
+import { Checkbox } from "@repo/components/ui/checkbox";
+import { useRouter } from "next/navigation";
 
-const formObject = z
+const accountTypeSchema = z
   .object({
-    email: z.email(),
     accountType: z.enum(["personal", "company"]),
     companyName: z.string().optional(),
     numOfEmployees: z.number().optional(),
-    dob: z.date().refine((date) => {
-      const today = new Date();
-      const eighteenYrsAgo = new Date(
-        today.getFullYear() - 18,
-        today.getMonth(),
-        today.getDate(),
-        0,
-        0,
-        0,
-        0,
-      );
-      return date <= eighteenYrsAgo;
-    }, "You must atleast 18 years old"),
-    password: z
-      .string()
-      .min(8, "Atleast 8 characters")
-      .max(14, "Maximum 14 characters")
-      .refine(
-        (password) => /^(?=.*[!@#$%^&*])(?=.*[A-Z]).*$/.test(password),
-        "Atleast 1 special char and 1 upper letter",
-      ),
-    passwordConfirm: z.string(),
   })
   .superRefine((data, ctx) => {
     if (data.accountType === "company") {
@@ -85,6 +65,21 @@ const formObject = z
         });
       }
     }
+  });
+
+const passwordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "Atleast 8 characters")
+      .max(14, "Maximum 14 characters")
+      .refine(
+        (password) => /^(?=.*[!@#$%^&*])(?=.*[A-Z]).*$/.test(password),
+        "Atleast 1 special char and 1 upper letter",
+      ),
+    passwordConfirm: z.string(),
+  })
+  .superRefine((data, ctx) => {
     if (data.password !== data.passwordConfirm) {
       ctx.addIssue({
         code: "custom",
@@ -94,21 +89,47 @@ const formObject = z
     }
   });
 
+const baseSchema = z.object({
+  email: z.email(),
+  dob: z.date().refine((date) => {
+    const today = new Date();
+    const eighteenYrsAgo = new Date(
+      today.getFullYear() - 18,
+      today.getMonth(),
+      today.getDate(),
+      0,
+      0,
+      0,
+      0,
+    );
+    return date <= eighteenYrsAgo;
+  }, "You must atleast 18 years old"),
+  acceptTerms: z
+    .boolean()
+    .refine((isAccepted) => isAccepted, "You must accept terms and conditions"),
+});
+
+const formObject = baseSchema.and(accountTypeSchema).and(passwordSchema);
+
 export default function SignupPage() {
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(formObject),
     defaultValues: {
       email: "",
-      password: "",
       accountType: undefined,
       companyName: undefined,
       numOfEmployees: undefined,
       dob: undefined,
+      password: "",
+      passwordConfirm: "",
+      acceptTerms: false,
     },
   });
 
   const handleFormSubmit = (data: z.infer<typeof formObject>) => {
     console.log("validated signup");
+    router.push("/dashboard");
   };
 
   const accountTypeW = form.watch("accountType");
@@ -272,11 +293,7 @@ export default function SignupPage() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="••••••••"
-                        type="password"
-                        {...field}
-                      />
+                      <PasswordInput placeholder="••••••••" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -289,12 +306,35 @@ export default function SignupPage() {
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="••••••••"
-                        type="password"
-                        {...field}
-                      />
+                      <PasswordInput placeholder="••••••••" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="acceptTerms"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex gap-1 items-center">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormLabel>I accept terms and conditions</FormLabel>
+                    </div>
+                    <FormDescription>
+                      By signing up you agree to our{" "}
+                      <Link
+                        href={"/terms"}
+                        className="text-primary hover:underline"
+                      >
+                        terms and conditions
+                      </Link>
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

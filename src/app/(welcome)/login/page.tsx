@@ -24,6 +24,8 @@ import {
   FormMessage,
 } from "@repo/components/ui/form";
 import { Input } from "@repo/components/ui/input";
+import { PasswordInput } from "@repo/components/ui/password";
+import { useRouter } from "next/navigation";
 
 const formObject = z.object({
   email: z.email(),
@@ -31,6 +33,7 @@ const formObject = z.object({
 });
 
 export default function LoginPage() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formObject>>({
     resolver: zodResolver(formObject),
     defaultValues: {
@@ -41,6 +44,7 @@ export default function LoginPage() {
 
   const handleFormSubmit = () => {
     console.log("validate login");
+    router.push("/dashboard");
   };
 
   return (
@@ -84,11 +88,7 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="p@ssw0Rd"
-                        // type="email"
-                        {...field}
-                      />
+                      <PasswordInput placeholder="••••••••" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
