@@ -106,7 +106,10 @@ const baseSchema = z.object({
   }, "You must atleast 18 years old"),
   acceptTerms: z
     .boolean()
-    .refine((isAccepted) => isAccepted, "You must accept terms and conditions"),
+    .refine(
+      (isAccepted) => !!isAccepted,
+      "You must accept terms and conditions",
+    ),
 });
 
 const formObject = baseSchema.and(accountTypeSchema).and(passwordSchema);

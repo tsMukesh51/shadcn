@@ -10,7 +10,7 @@ import {
 } from "./tooltip";
 import { useTheme } from "next-themes";
 
-export function LightDarkToggle({ className }: { className: string }) {
+export function LightDarkToggle({ className }: { className?: string }) {
   const { setTheme, resolvedTheme } = useTheme();
 
   return (
