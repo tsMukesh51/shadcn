@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback } from "@repo/components/ui/avatar";
 import { Button } from "@repo/components/ui/button";
 import {
   Card,
@@ -12,18 +13,25 @@ import {
   BadgeAlertIcon,
   BadgeCheckIcon,
   BadgeXIcon,
+  PartyPopperIcon,
   UserCheck2Icon,
   UserCheckIcon,
   UserIcon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import cmImg from "../../../../../public/cm.jpg";
 
-export default function EmployeeStats() {
+export default function EmployeeOverviewStats({
+  className,
+}: {
+  className?: string;
+}) {
   const totalEmployees = 120;
   const employeesPresent = 70;
   const employeesPresentPercent = (employeesPresent * 100) / totalEmployees;
   return (
-    <div className="grid gap-4 lg:grid-cols-3">
+    <div className={`grid gap-4 lg:grid-cols-3 ${className}`}>
       <Card className="gap-2">
         <CardHeader>
           <CardTitle className="text-base">Total Employees</CardTitle>
@@ -70,6 +78,17 @@ export default function EmployeeStats() {
         <CardHeader>
           <CardTitle className="text-base">Employees Present</CardTitle>
         </CardHeader>
+        <CardContent className="flex gap-2 items-center">
+          <Avatar>
+            <Image src={cmImg} alt="Avatar of CM" />
+            <AvatarFallback>CM</AvatarFallback>
+          </Avatar>
+          <span className="text-2xl">Collin Murray</span>
+        </CardContent>
+        <CardFooter className="flex gap-2 text-xs items-center text-muted-foreground mt-auto">
+          <PartyPopperIcon className="text-pink-500" />
+          <span>Congratulations, Collin</span>
+        </CardFooter>
       </Card>
     </div>
   );
