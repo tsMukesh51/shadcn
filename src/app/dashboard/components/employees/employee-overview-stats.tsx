@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import cmImg from "../../../../../public/cm.jpg";
+import cmImg from "@public/cm.jpg";
 
 export default function EmployeeOverviewStats({
   className,

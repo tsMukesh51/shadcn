@@ -6,6 +6,8 @@ import {
 } from "@repo/components/ui/tabs";
 import EmployeeOverviewStats from "./components/employees/employee-overview-stats";
 import EmployeeGraph from "./components/employees/employee-graph";
+import TeamsOverviewStats from "./components/teams/teams-overview-stats";
+import TeamsGraph from "./components/teams/teams-graph";
 
 const tabsList = {
   employees: "employees",
@@ -23,7 +25,10 @@ export default function DashboardPage() {
         <EmployeeOverviewStats className="mb-4" />
         <EmployeeGraph className="mb-4" />
       </TabsContent>
-      <TabsContent value={tabsList.teams}>Teams</TabsContent>
+      <TabsContent value={tabsList.teams}>
+        <TeamsOverviewStats className="mb-4" />
+        <TeamsGraph className="mb-4" />
+      </TabsContent>
     </Tabs>
   );
 }

@@ -16,6 +16,12 @@ interface DataItem {
   wfh: number;
 }
 
+const DataItemKeys = {
+  name: "name",
+  office: "office",
+  wfh: "wfh",
+};
+
 const data: DataItem[] = [
   {
     name: "Jan",
@@ -82,18 +88,35 @@ const data: DataItem[] = [
 export default function WorkLocationTrendsChart() {
   return (
     <ResponsiveContainer height={350} width={"100%"}>
-      <BarChart data={data}>
-        <XAxis dataKey={"name"} stroke="#888888" fontSize={12} />
+      <BarChart
+        data={data}
+        className="[&_.recharts-tooltip-cursor]:fill-zinc-200 dark:[&_.recharts-tooltip-cursor]:fill-zinc-800"
+      >
+        <XAxis dataKey={DataItemKeys.name} stroke="#888888" fontSize={12} />
         <YAxis stroke="#888888" fontSize={12} />
-        <Tooltip />
-        <Bar dataKey={"office"} stackId={1} fill="#EC4899" />
-        <Bar dataKey={"wfh"} stackId={1} fill="#6B7280" radius={[4, 4, 0, 0]} />
+        <Tooltip
+          formatter={(val, name) => {
+            if (name === DataItemKeys.office) return [val, "Work from office"];
+            else if (name === DataItemKeys.wfh) return [val, "Work from home"];
+            else return [val, ""];
+          }}
+          separator=": "
+          labelClassName="font-bold"
+          wrapperClassName="!text-sm rounded-md dark:!bg-black dark:!border-border"
+        />
+        <Bar dataKey={DataItemKeys.office} stackId={1} fill="#EC4899" />
+        <Bar
+          dataKey={DataItemKeys.wfh}
+          stackId={1}
+          fill="#6B7280"
+          radius={[4, 4, 0, 0]}
+        />
         <Legend
           iconType="circle"
           formatter={(val) => {
-            if (val === "office")
+            if (val === DataItemKeys.office)
               return <span className="text-sm">Work from office</span>;
-            else if (val === "wfh")
+            else if (val === DataItemKeys.wfh)
               return <span className="text-sm">Work from home</span>;
             else return <span></span>;
           }}

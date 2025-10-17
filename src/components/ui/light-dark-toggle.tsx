@@ -22,6 +22,7 @@ export function LightDarkToggle({ className }: { className?: string }) {
             onClick={() =>
               setTheme(resolvedTheme === "light" ? "dark" : "light")
             }
+            className="rounded-full p-2 has-[>svg]:px-2.25"
           >
             <SunIcon className="dark:hidden" />
             <MoonIcon className="hidden dark:block" />
