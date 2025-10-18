@@ -87,23 +87,27 @@ const data = [
 
 export default function SupportTicketResolvedTrend() {
   return (
-    <ResponsiveContainer width={"100%"} height={350}>
-      <LineChart data={data}>
-        <XAxis dataKey={"name"} stroke="#888888" fontSize={12} />
-        <YAxis stroke="#888888" fontSize={12} />
-        <CartesianGrid strokeDasharray={"3 4"} />
-        <Tooltip
-          separator=": "
-          labelClassName="font-bold"
-          wrapperClassName="!text-sm rounded-md dark:!bg-black dark:!border-border"
-        />
-        <Line dataKey={"delta"} stroke="#84cc16" type="monotone" />
-        <Line dataKey={"alpha"} stroke="#3b82f6" type="monotone" />
-        <Line dataKey={"canary"} stroke="#f97316" type="monotone" />
-        <Legend
-          formatter={(val) => <span className="capitalize">{val}</span>}
-        />
-      </LineChart>
-    </ResponsiveContainer>
+    <div className="overflow-x-auto pr-4">
+      <div className="min-w-xl">
+        <ResponsiveContainer width={"100%"} height={350}>
+          <LineChart data={data}>
+            <XAxis dataKey={"name"} stroke="#888888" fontSize={12} />
+            <YAxis stroke="#888888" fontSize={12} />
+            <CartesianGrid strokeDasharray={"3 4"} />
+            <Tooltip
+              separator=": "
+              labelClassName="font-bold"
+              wrapperClassName="!text-sm rounded-md dark:!bg-black dark:!border-border"
+            />
+            <Line dataKey={"delta"} stroke="#84cc16" type="monotone" />
+            <Line dataKey={"alpha"} stroke="#3b82f6" type="monotone" />
+            <Line dataKey={"canary"} stroke="#f97316" type="monotone" />
+            <Legend
+              formatter={(val) => <span className="capitalize">{val}</span>}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
   );
 }

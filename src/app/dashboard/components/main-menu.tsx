@@ -9,7 +9,7 @@ export default function MainMenu({ className }: { className?: string }) {
   return (
     <nav
       className={cn(
-        "flex flex-col h-screen md:bg-muted overflow-auto p-4",
+        "flex flex-col h-screen md:bg-muted overflow-y-auto p-4",
         className,
       )}
     >
