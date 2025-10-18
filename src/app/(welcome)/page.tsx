@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Button } from "@repo/components/ui/button";
 import { PersonStandingIcon } from "lucide-react";
 import Link from "next/link";

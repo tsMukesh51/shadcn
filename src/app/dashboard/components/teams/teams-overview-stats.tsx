@@ -3,22 +3,12 @@ import { Button } from "@repo/components/ui/button";
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@repo/components/ui/card";
-import { cn } from "@repo/lib/utils";
 import {
-  AlertTriangleIcon,
-  BadgeAlertIcon,
-  BadgeCheckIcon,
-  BadgeXIcon,
-  PartyPopperIcon,
   PieChartIcon,
   StarIcon,
-  UserCheck2Icon,
-  UserCheckIcon,
-  UserIcon,
   UsersIcon,
 } from "lucide-react";
 import Image from "next/image";

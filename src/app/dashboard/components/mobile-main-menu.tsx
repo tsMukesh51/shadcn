@@ -8,7 +8,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@repo/components/ui/drawer";
-import { HamburgerIcon, MenuIcon } from "lucide-react";
+import { MenuIcon } from "lucide-react";
 import MainMenu from "./main-menu";
 import { useEffect, useState } from "react";
 

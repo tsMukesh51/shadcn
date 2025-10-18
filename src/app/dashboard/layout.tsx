@@ -1,12 +1,6 @@
-import {
-  Drawer,
-  DrawerContent,
-  DrawerTrigger,
-} from "@repo/components/ui/drawer";
+
+
 import MainMenu from "./components/main-menu";
-import MenuTitle from "./components/menu-title";
-import { HamburgerIcon, MenuIcon } from "lucide-react";
-import { useMediaQuery } from "@hooks/use-media-query";
 import MobileMainMenu from "./components/mobile-main-menu";
 
 export default function DashboardLayout({

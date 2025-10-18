@@ -10,12 +10,9 @@ import {
 import { cn } from "@repo/lib/utils";
 import {
   AlertTriangleIcon,
-  BadgeAlertIcon,
   BadgeCheckIcon,
-  BadgeXIcon,
   PartyPopperIcon,
   UserCheck2Icon,
-  UserCheckIcon,
   UserIcon,
 } from "lucide-react";
 import Image from "next/image";
