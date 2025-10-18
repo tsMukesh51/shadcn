@@ -19,10 +19,11 @@ export function LightDarkToggle({ className }: { className?: string }) {
         <TooltipTrigger className={className} asChild>
           <Button
             variant={"outline"}
+            size={"icon"}
             onClick={() =>
               setTheme(resolvedTheme === "light" ? "dark" : "light")
             }
-            className="rounded-full p-2 has-[>svg]:px-2.25"
+            className="rounded-full"
           >
             <SunIcon className="dark:hidden" />
             <MoonIcon className="hidden dark:block" />
